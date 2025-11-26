@@ -1,0 +1,81 @@
+from typing import Optional
+
+from pydantic import BaseModel, Field, field_validator
+
+
+class Gate(BaseModel):
+    """Quantum gate definition"""
+
+    type: str = Field(..., description="Gate type (H, X, Y, Z, CNOT, RX, RY, RZ)")
+    qubit: Optional[int] = Field(None, description="Target qubit index for single-qubit gates", ge=0)
+    control: Optional[int] = Field(None, description="Control qubit index for CNOT", ge=0)
+    target: Optional[int] = Field(None, description="Target qubit index for CNOT", ge=0)
+    parameter: Optional[float] = Field(None, description="Rotation angle in radians for rotation gates")
+    position: int = Field(..., description="Time step position in circuit", ge=0)
+
+    @field_validator("type")
+    @classmethod
+    def validate_gate_type(cls, v: str) -> str:
+        valid_types = ["H", "X", "Y", "Z", "CNOT", "RX", "RY", "RZ"]
+        if v not in valid_types:
+            raise ValueError(f"Invalid gate type: {v}. Must be one of {valid_types}")
+        return v
+
+    @field_validator("parameter")
+    @classmethod
+    def validate_parameter(cls, v: Optional[float], info) -> Optional[float]:
+        gate_type = info.data.get("type")
+        if gate_type in ["RX", "RY", "RZ"] and v is None:
+            # Default rotation angle for rotation gates
+            return 0.785398163  # π/4
+        return v
+
+
+class CircuitRequest(BaseModel):
+    """Request payload for circuit simulation"""
+
+    qubits: int = Field(..., ge=2, le=5, description="Number of qubits (2-5)")
+    gates: list[Gate] = Field(..., max_length=20, description="List of gates (max 20)")
+    shots: int = Field(1024, ge=100, le=10000, description="Number of measurement shots")
+
+    @field_validator("gates")
+    @classmethod
+    def validate_gates(cls, v: list[Gate], info) -> list[Gate]:
+        qubits = info.data.get("qubits", 0)
+
+        for gate in v:
+            # Validate qubit indices
+            if gate.qubit is not None and gate.qubit >= qubits:
+                raise ValueError(f"Gate qubit index {gate.qubit} exceeds number of qubits {qubits}")
+
+            if gate.control is not None and gate.control >= qubits:
+                raise ValueError(f"Gate control index {gate.control} exceeds number of qubits {qubits}")
+
+            if gate.target is not None and gate.target >= qubits:
+                raise ValueError(f"Gate target index {gate.target} exceeds number of qubits {qubits}")
+
+            # Validate gate-specific constraints
+            if gate.type == "CNOT":
+                if gate.control is None or gate.target is None:
+                    raise ValueError("CNOT gate requires both control and target qubits")
+                if gate.control == gate.target:
+                    raise ValueError("CNOT control and target must be different qubits")
+            else:
+                if gate.qubit is None:
+                    raise ValueError(f"{gate.type} gate requires qubit field")
+
+        return v
+
+
+class SimulationResult(BaseModel):
+    """Simulation result payload"""
+
+    counts: dict[str, int] = Field(..., description="Measurement counts dictionary")
+    execution_time: float = Field(..., description="Execution time in seconds", ge=0)
+
+
+class ErrorResponse(BaseModel):
+    """Error response payload"""
+
+    detail: str = Field(..., description="Error message")
+    error_code: str = Field(..., description="Error code")
