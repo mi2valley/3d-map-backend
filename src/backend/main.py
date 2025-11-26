@@ -8,8 +8,7 @@ from backend.config import DEBUG_MODE
 from backend.router.api.auth import router as auth_router
 from backend.router.api.meta import router as meta_router
 from backend.router.api.user import router as user_router
-
-from .router.lifespan import shut_down, start_up
+from backend.router.lifespan import shut_down, start_up
 
 
 class Settings(BaseSettings):
