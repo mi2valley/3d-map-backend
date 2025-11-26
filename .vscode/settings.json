@@ -1,0 +1,39 @@
+{
+  // vscode
+  "editor.formatOnSave": true,
+
+  // python
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit",
+      "source.fixAll.ruff": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  // notebook
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.organizeImports.ruff": "explicit",
+    "notebook.source.fixAll.ruff": "explicit"
+  },
+
+  // ruff
+  "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
+  "ruff.organizeImports": true,
+  "ruff.configuration": "--config=${workspaceFolder}/pyproject.toml",
+
+  // words
+  "cSpell.words": ["dotenv", "langchain", "milvus", "pydantic", "watsonx"],
+
+  // visible
+  "files.exclude": {
+    ".coverage": true,
+    ".mypy_cache": true,
+    ".pytest_cache": true,
+    ".tox": false,
+    ".venv": false,
+    "**/__pycache__": true
+  }
+}

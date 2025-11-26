@@ -1,0 +1,27 @@
+default_stages: [pre-commit]
+# fail_fast: true
+exclude: |
+  (?x)^(
+      .venv/|
+      .*_cache/|
+      .git/
+  )$
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+        exclude: "^.vscode/"
+      - id: check-yaml
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.12.0
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [--fix]
+        exclude: '\.(ipynb)$'
+      # Run the formatter.
+      - id: ruff-format

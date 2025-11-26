@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["mi2valley <monocoin189@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "backend", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+pydantic = "^2.12.4"
+fastapi = {extras = ["standard"], version = "^0.121.1"}
+qiskit = {extras = ["qasm3-import"], version = "^2.2.3"}
+uvicorn = {extras = ["standard"], version = "^0.38.0"}
+python-jose = {extras = ["cryptography"], version = "^3.5.0"}
+bcrypt = "4.0.1"
+uuid-utils = "^0.11.1"
+passlib = "^1.7.4"
+gunicorn = "^23.0.0"
+pydantic-settings = "^2.12.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.14.4"
+mypy = "^1.18.2"
+pre-commit = "^4.4.0"
+pytest = "^9.0.0"
+pyright = "^1.1.407"
+jupyter = "^1.1.1"
+matplotlib = "^3.10.7"
+pylatexenc = "^2.10"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+include = ["src"]
+exclude = [".*", "__*", "**/typings", "*.ipynb"]
+ignore = []
+defineConstant = { DEBUG = true }
+venvPath = "."
+venv = ".venv"
+reportMissingModuleSource = "none"
+reportUnnecessaryTypeIgnoreComment = "error"
+
+[tool.ruff]
+lint.extend-select = []
+lint.fixable = ["ALL"]
+lint.ignore = []
+lint.select = ["E", "F", "N", "I"]
+lint.unfixable = ["F401"]
+line-length = 119
+target-version = "py313"
