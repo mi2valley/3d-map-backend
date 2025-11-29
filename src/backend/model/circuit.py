@@ -67,11 +67,26 @@ class CircuitRequest(BaseModel):
         return v
 
 
+class QSpherePoint(BaseModel):
+    """Q-sphere coordinate for a single basis state"""
+
+    state: str = Field(..., description="Basis state string, e.g. '010'")
+    x: float = Field(..., description="X coordinate on unit sphere")
+    y: float = Field(..., description="Y coordinate on unit sphere")
+    z: float = Field(..., description="Z coordinate on unit sphere")
+    probability: float = Field(..., ge=0.0, le=1.0, description="Probability |amplitude|^2")
+    phase: float = Field(..., description="Phase of amplitude in radians (-π..π)")
+
+
 class SimulationResult(BaseModel):
     """Simulation result payload"""
 
     counts: dict[str, int] = Field(..., description="Measurement counts dictionary")
     execution_time: float = Field(..., description="Execution time in seconds", ge=0)
+    qsphere: Optional[list[QSpherePoint]] = Field(
+        None,
+        description="Optional Q-sphere coordinates for visualizing the output state",
+    )
 
 
 class ErrorResponse(BaseModel):

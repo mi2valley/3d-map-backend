@@ -1,10 +1,19 @@
 """Quantum circuit simulation using Qiskit"""
 
+from __future__ import annotations
+
+import logging
 import time
 from typing import TypedDict
 
 from qiskit import QuantumCircuit
+from qiskit.quantum_info import Statevector
 from qiskit_aer import AerSimulator
+
+from backend.model.circuit import QSpherePoint
+from backend.quantum.qsphere import compute_qsphere_points
+
+logger = logging.getLogger(__name__)
 
 
 class SimulationError(Exception):
@@ -18,6 +27,7 @@ class SimulationResultDict(TypedDict):
 
     counts: dict[str, int]
     execution_time: float
+    qsphere: list[QSpherePoint] | None
 
 
 def simulate_qasm(qasm_code: str, shots: int = 1024) -> SimulationResultDict:
@@ -32,6 +42,7 @@ def simulate_qasm(qasm_code: str, shots: int = 1024) -> SimulationResultDict:
         SimulationResultDict containing:
             - counts: Measurement outcome counts (dict[str, int])
             - execution_time: Simulation execution time in seconds (float)
+            - qsphere: Optional Q-sphere points for visualization
 
     Raises:
         SimulationError: If circuit parsing or simulation fails
@@ -69,7 +80,16 @@ def simulate_qasm(qasm_code: str, shots: int = 1024) -> SimulationResultDict:
         # Calculate execution time
         execution_time = time.time() - start_time
 
-        return SimulationResultDict(counts=counts, execution_time=execution_time)
+        # Compute Q-sphere coordinates from the final statevector (without measurements)
+        qsphere: list[QSpherePoint] | None = None
+        try:
+            circuit_without_measure = circuit.remove_final_measurements(inplace=False)
+            state = Statevector.from_instruction(circuit_without_measure)
+            qsphere = compute_qsphere_points(state)
+        except Exception as exc:
+            logger.warning("Failed to compute Q-sphere points: %s", exc)
+
+        return SimulationResultDict(counts=counts, execution_time=execution_time, qsphere=qsphere)
 
     except Exception as e:
         raise SimulationError(f"Simulation failed: {str(e)}") from e
