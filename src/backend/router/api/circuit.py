@@ -70,7 +70,11 @@ async def simulate(request: CircuitRequest) -> SimulationResult:
             f"Simulation completed in {result['execution_time']:.3f}s, got {len(result['counts'])} unique outcomes"
         )
 
-        return SimulationResult(counts=result["counts"], execution_time=result["execution_time"])
+        return SimulationResult(
+            counts=result["counts"],
+            execution_time=result["execution_time"],
+            qsphere=result.get("qsphere"),
+        )
 
     except ValueError as e:
         # Validation errors from Pydantic or our validators
