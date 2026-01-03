@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 
 from backend.config import DEBUG_MODE
 from backend.router.api.auth import router as auth_router
+from backend.router.api.circuit import router as circuit_router
 from backend.router.api.meta import router as meta_router
 from backend.router.api.user import router as user_router
 from backend.router.lifespan import shut_down, start_up
@@ -48,3 +49,4 @@ app.add_middleware(
 app.include_router(meta_router)
 app.include_router(user_router)
 app.include_router(auth_router)
+app.include_router(circuit_router)
