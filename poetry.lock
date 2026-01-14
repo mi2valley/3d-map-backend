@@ -1194,6 +1194,45 @@ socks = ["socksio (==1.*)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "ibm-cloud-sdk-core"
+version = "3.24.2"
+description = "Core library used by SDKs for IBM Cloud Services"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "ibm_cloud_sdk_core-3.24.2-py3-none-any.whl", hash = "sha256:432c0edd812a22a1c61af095bf48202e29a1c03a893fc735389399ace059ee64"},
+    {file = "ibm_cloud_sdk_core-3.24.2.tar.gz", hash = "sha256:06265ce80162301c0e3dab336f76669137e40038ec802011e4c92f143bead116"},
+]
+
+[package.dependencies]
+PyJWT = ">=2.10.1,<3.0.0"
+python_dateutil = ">=2.9.0,<3.0.0"
+requests = ">=2.32.4,<3.0.0"
+urllib3 = ">=2.4.0,<3.0.0"
+
+[package.extras]
+dev = ["black (>=25.0.0,<26.0.0)", "coverage (>=7.9.0,<8.0.0)", "pylint (>=3.3.7,<4.0.0)", "pytest (>=7.4.4,<8.0.0)", "pytest-cov (>=4.1.0,<5.0.0)", "responses (>=0.25.7,<1.0.0)"]
+publish = ["build", "twine"]
+
+[[package]]
+name = "ibm-platform-services"
+version = "0.72.0"
+description = "Python client library for IBM Cloud Platform Services"
+optional = false
+python-versions = ">=3.10"
+files = [
+    {file = "ibm_platform_services-0.72.0-py3-none-any.whl", hash = "sha256:a2c434a35add6ba07c790fbd6192dd4df34b67b3561224857794ac10cb75be43"},
+    {file = "ibm_platform_services-0.72.0.tar.gz", hash = "sha256:ccceced72e4aeeaea58b2ce5c6d80888c066580974ab864ea9b2d48244a89dca"},
+]
+
+[package.dependencies]
+ibm_cloud_sdk_core = ">=3.24.2,<4.0.0"
+
+[package.extras]
+dev = ["black (>=25.0.0,<26.0.0)", "coverage (>=7.9.0,<8.0.0)", "pylint (>=3.3.7,<4.0.0)", "pytest (>=7.4.4,<8.0.0)", "pytest-cov (>=4.1.0,<5.0.0)", "responses (>=0.25.7,<1.0.0)"]
+publish = ["build", "twine"]
+
+[[package]]
 name = "identify"
 version = "2.6.15"
 description = "File identification library for Python"
@@ -2922,6 +2961,23 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
+name = "pyjwt"
+version = "2.10.1"
+description = "JSON Web Token implementation in Python"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "PyJWT-2.10.1-py3-none-any.whl", hash = "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb"},
+    {file = "pyjwt-2.10.1.tar.gz", hash = "sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953"},
+]
+
+[package.extras]
+crypto = ["cryptography (>=3.4.0)"]
+dev = ["coverage[toml] (==5.0.4)", "cryptography (>=3.4.0)", "pre-commit", "pytest (>=6.0.0,<7.0.0)", "sphinx", "sphinx-rtd-theme", "zope.interface"]
+docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
+tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
+
+[[package]]
 name = "pylatexenc"
 version = "2.10"
 description = "Simple LaTeX parser providing latex-to-unicode and unicode-to-latex conversion"
@@ -2964,6 +3020,25 @@ typing-extensions = ">=4.1"
 all = ["nodejs-wheel-binaries", "twine (>=3.4.1)"]
 dev = ["twine (>=3.4.1)"]
 nodejs = ["nodejs-wheel-binaries"]
+
+[[package]]
+name = "pyspnego"
+version = "0.12.0"
+description = "Windows Negotiate Authentication Client and Server"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "pyspnego-0.12.0-py3-none-any.whl", hash = "sha256:84cc8dae6ad21e04b37c50c1d3c743f05f193e39498f6010cc68ec1146afd007"},
+    {file = "pyspnego-0.12.0.tar.gz", hash = "sha256:e1d9cd3520a87a1d6db8d68783b17edc4e1464eae3d51ead411a51c82dbaae67"},
+]
+
+[package.dependencies]
+cryptography = "*"
+sspilib = {version = ">=0.3.0", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+kerberos = ["gssapi (>=1.6.0)", "krb5 (>=0.3.0)"]
+yaml = ["ruamel.yaml"]
 
 [[package]]
 name = "pytest"
@@ -3357,6 +3432,35 @@ qiskit = ">=1.1.0"
 scipy = ">=1.0"
 
 [[package]]
+name = "qiskit-ibm-runtime"
+version = "0.44.0"
+description = "IBM Quantum client for Qiskit Runtime."
+optional = false
+python-versions = ">=3.10"
+files = [
+    {file = "qiskit_ibm_runtime-0.44.0-py3-none-any.whl", hash = "sha256:da3e00f08dfcc74459fd9be63f7e66740266f677c7af520385e1715849c4a751"},
+    {file = "qiskit_ibm_runtime-0.44.0.tar.gz", hash = "sha256:802b24e7007212773098a605688a98bcad095e4f786dd968bdbd5b87fb2530f1"},
+]
+
+[package.dependencies]
+ibm-platform-services = ">=0.22.6"
+numpy = ">=1.13"
+packaging = "*"
+pydantic = ">=2.5.0"
+python-dateutil = ">=2.8.0"
+qiskit = ">=1.4.1"
+requests = ">=2.19,<2.32.2 || >2.32.2"
+requests-ntlm = ">=1.1.0"
+urllib3 = ">=1.21.1"
+
+[package.extras]
+common = ["black (>=24.1,<25.0)", "coverage (>=6.3)", "jupyter", "matplotlib (>=2.1)", "mypy (==1.19.0)", "nbconvert (>=5.3.1)", "nbformat (>=4.4.0)", "nbqa (==1.5.3)", "pproxy (==2.7.8)", "pylatexenc", "pylint (==3.0.0)", "qiskit-aer (>=0.17.0)", "scikit-learn", "scipy (>=1.0)", "setuptools"]
+dev = ["qiskit-ibm-runtime[common]", "qiskit-ibm-runtime[documentation]", "qiskit-ibm-runtime[test]", "qiskit-ibm-runtime[visualization]"]
+documentation = ["Sphinx (>=6)", "jupyter-sphinx", "nbsphinx", "packaging", "sphinx-autodoc-typehints (<=1.19.2)", "sphinx-automodapi", "sphinxcontrib-katex (==0.9.9)"]
+test = ["ddt (>=1.2.0,!=1.4.0,!=1.4.3)"]
+visualization = ["plotly (>=5.23.0)"]
+
+[[package]]
 name = "qiskit-qasm3-import"
 version = "0.6.0"
 description = "Importer for parsing OpenQASM 3 strings into Qiskit circuits"
@@ -3406,6 +3510,22 @@ urllib3 = ">=1.21.1,<3"
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+
+[[package]]
+name = "requests-ntlm"
+version = "1.3.0"
+description = "This package allows for HTTP NTLM authentication using the requests library."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "requests_ntlm-1.3.0-py3-none-any.whl", hash = "sha256:4c7534a7d0e482bb0928531d621be4b2c74ace437e88c5a357ceb7452d25a510"},
+    {file = "requests_ntlm-1.3.0.tar.gz", hash = "sha256:b29cc2462623dffdf9b88c43e180ccb735b4007228a542220e882c58ae56c668"},
+]
+
+[package.dependencies]
+cryptography = ">=1.3"
+pyspnego = ">=0.4.0"
+requests = ">=2.0.0"
 
 [[package]]
 name = "rfc3339-validator"
@@ -4061,6 +4181,44 @@ files = [
 ]
 
 [[package]]
+name = "sspilib"
+version = "0.5.0"
+description = "SSPI API bindings for Python"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "sspilib-0.5.0-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:9c64965de12f3eea242fd57045e546721929f62da65a3e5d629bee39314394d1"},
+    {file = "sspilib-0.5.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:bab2f828bfb8750091f17a71cc753402ecc24544331570edeaa04b97e0f97193"},
+    {file = "sspilib-0.5.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:05f13740f16ffd14ef2d383fc2f9d376a414052263bc7595929019195dfc001a"},
+    {file = "sspilib-0.5.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:07efa91478c3e6de328fe65226172b8e4cf08976be859d4dbf03655be6b6c4ab"},
+    {file = "sspilib-0.5.0-cp310-cp310-win32.whl", hash = "sha256:8dab68e994d24a08f854d36ac96409b3b8cc03fdebc590925f76f9d733c3a902"},
+    {file = "sspilib-0.5.0-cp310-cp310-win_amd64.whl", hash = "sha256:9e1947df07110ee1861009fc117bd089a7710403f3f5c488fb52a6e00b7c5b84"},
+    {file = "sspilib-0.5.0-cp310-cp310-win_arm64.whl", hash = "sha256:28d0eb944f7ff70bc99fe729d06fa230aec1649c5bc216809e359cd0c77d4840"},
+    {file = "sspilib-0.5.0-cp311-abi3-macosx_10_12_x86_64.whl", hash = "sha256:eaba0331997368ffbdedff5e95f4fec18b19c809637e8848a4c673130fb4dd9e"},
+    {file = "sspilib-0.5.0-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:3dbb80bfe0a17f272c68e9d86a0375d11f98157abe998272a540e635694c1540"},
+    {file = "sspilib-0.5.0-cp311-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:4266eda17b81f50e71a3f75cdddf424d76046de68d8014d289a895ec008df4e4"},
+    {file = "sspilib-0.5.0-cp311-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:57ea0ce644339bb71ee3eb226b22a121d011b0aea5e2f32d078d88f4a269359b"},
+    {file = "sspilib-0.5.0-cp311-abi3-win32.whl", hash = "sha256:fcb57b41b3200ef2e6e8846e2a13799d20b35b796267f2f75cc65e3883e8eeb6"},
+    {file = "sspilib-0.5.0-cp311-abi3-win_amd64.whl", hash = "sha256:ca2a21a4e90db563c2cec639c66b3a29ea53129a0c55ff1e4154a02937f6bd45"},
+    {file = "sspilib-0.5.0-cp311-abi3-win_arm64.whl", hash = "sha256:6893bad16f122fc3c4bd908461b9728694465c05ca97c22f7e2094791c4ee3cb"},
+    {file = "sspilib-0.5.0-cp314-cp314t-macosx_10_15_x86_64.whl", hash = "sha256:10018d475022643d11b1aeef08e674d8a3f8b03a597ad31fa8c8c302a58ee960"},
+    {file = "sspilib-0.5.0-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:2124dece22406b71294311bcef7e0e3fae88e85fee77039a96771f6972c98377"},
+    {file = "sspilib-0.5.0-cp314-cp314t-manylinux_2_28_aarch64.whl", hash = "sha256:963ca7d7158b19b46fcfd8c3bb5f94696ff6e9cf7b01911586717105f11336b0"},
+    {file = "sspilib-0.5.0-cp314-cp314t-manylinux_2_28_x86_64.whl", hash = "sha256:13d9fbe9a2e0df6405cac39a2a5a93f0f04c67b8e8d5e4c6cd27f8f76a16ce9c"},
+    {file = "sspilib-0.5.0-cp314-cp314t-win32.whl", hash = "sha256:9dad272abf3f4cf0bf95d495075d2987f6ba1fb300f8d603661ccac07d11272f"},
+    {file = "sspilib-0.5.0-cp314-cp314t-win_amd64.whl", hash = "sha256:7d7724d5dbb31f68e62465863dfb862fe2793281ce40d0c8f2dc60c8f07998f2"},
+    {file = "sspilib-0.5.0-cp314-cp314t-win_arm64.whl", hash = "sha256:8ce23ec740dee025136370ed4ae64b7d1535368321049ef960012a57c93ebe15"},
+    {file = "sspilib-0.5.0-cp39-cp39-macosx_10_12_x86_64.whl", hash = "sha256:cbf2c8a907fb51f0522a1360a7d9dc8b08fd0a6edf978ce6f3b96a0d95df6a60"},
+    {file = "sspilib-0.5.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:a9f40f896beecaa33530a55201c5c78f840ffc42aaeb9b0a41caaf0626508282"},
+    {file = "sspilib-0.5.0-cp39-cp39-manylinux_2_28_aarch64.whl", hash = "sha256:2b1d24be70dfe01733161c05862f6ab653d2f6d2e5bd52138f9dae9c91c23f2e"},
+    {file = "sspilib-0.5.0-cp39-cp39-manylinux_2_28_x86_64.whl", hash = "sha256:0f1b75967135d065139b94095c5b5312eb9e3316e6f6a9b317310f6b16ea47ba"},
+    {file = "sspilib-0.5.0-cp39-cp39-win32.whl", hash = "sha256:ef3cbac859b2dfc50c9ee6e822bd0f65538196fe5c863f11a53ac13e6d08641c"},
+    {file = "sspilib-0.5.0-cp39-cp39-win_amd64.whl", hash = "sha256:a72f6c64e16e9f9ac7a0652579590de54b1c35d1304382d9a1195be1e1a3be6c"},
+    {file = "sspilib-0.5.0-cp39-cp39-win_arm64.whl", hash = "sha256:f7a81176e0b59e68259c22f712ce3c411975b897dd32649f22a3aad41e621a21"},
+    {file = "sspilib-0.5.0.tar.gz", hash = "sha256:b62f7f2602aa1add0505eee2417e2df24421224cb411e53bf3ae42a71b62fe98"},
+]
+
+[[package]]
 name = "stack-data"
 version = "0.6.3"
 description = "Extract data from python stack frames and tracebacks for informative displays"
@@ -4672,4 +4830,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "1c35786f1720096fa4e0fef910b44a26fd5b237348742c09c9b9ec4cc6cab760"
+content-hash = "0350be434fb0129a54a7b5c5373e43dffecd423cf5a0341f5042b43846fe9fce"
