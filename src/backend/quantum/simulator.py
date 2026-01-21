@@ -6,12 +6,16 @@ import logging
 import time
 from typing import TypedDict
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import Statevector
 from qiskit_aer import AerSimulator
 
-from backend.model.circuit import QSpherePoint
+from backend.model.circuit import BackendType, QSpherePoint, SimulationProfile
+from backend.quantum.backends import get_fake_backend
 from backend.quantum.qsphere import compute_qsphere_points
+
+# if TYPE_CHECKING:
+#     from qiskit.providers import BackendV2
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +34,18 @@ class SimulationResultDict(TypedDict):
     qsphere: list[QSpherePoint] | None
 
 
-def simulate_qasm(qasm_code: str, shots: int = 1024) -> SimulationResultDict:
+def simulate_qasm(
+    qasm_code: str,
+    shots: int = 1024,
+    profile: SimulationProfile | None = None,
+) -> SimulationResultDict:
     """
-    Simulate a quantum circuit from OpenQASM code using Qiskit AerSimulator.
+    Simulate a quantum circuit from OpenQASM code.
 
     Args:
         qasm_code: OpenQASM 2.0 code string
         shots: Number of measurement shots (default: 1024)
+        profile: Simulation profile specifying backend type
 
     Returns:
         SimulationResultDict containing:
@@ -61,38 +70,73 @@ def simulate_qasm(qasm_code: str, shots: int = 1024) -> SimulationResultDict:
         >>> print(result['counts'])
         {'00': 512, '11': 512}
     """
+    if profile is None:
+        profile = SimulationProfile()
+
     start_time = time.time()
 
     try:
-        # Parse OpenQASM code to Qiskit QuantumCircuit
         circuit = QuantumCircuit.from_qasm_str(qasm_code)
 
-        # Initialize AerSimulator
-        simulator = AerSimulator()
+        if profile.type == BackendType.NOISY_FAKE:
+            counts = _run_noisy_simulation(circuit, shots, profile)
+        else:
+            counts = _run_ideal_simulation(circuit, shots, profile.seed)
 
-        # Run simulation
-        job = simulator.run(circuit, shots=shots)
-        result = job.result()
-
-        # Get measurement counts and convert to standard dict
-        counts = dict(result.get_counts())
-
-        # Calculate execution time
         execution_time = time.time() - start_time
 
-        # Compute Q-sphere coordinates from the final statevector (without measurements)
-        qsphere: list[QSpherePoint] | None = None
-        try:
-            circuit_without_measure = circuit.remove_final_measurements(inplace=False)
-            state = Statevector.from_instruction(circuit_without_measure)
-            qsphere = compute_qsphere_points(state)
-        except Exception as exc:
-            logger.warning("Failed to compute Q-sphere points: %s", exc)
+        # Compute Q-sphere (always from ideal statevector for consistent visualization)
+        qsphere = _compute_qsphere(circuit)
 
         return SimulationResultDict(counts=counts, execution_time=execution_time, qsphere=qsphere)
 
+    except SimulationError:
+        raise
     except Exception as e:
         raise SimulationError(f"Simulation failed: {str(e)}") from e
+
+
+def _run_ideal_simulation(circuit: QuantumCircuit, shots: int, seed: int | None = None) -> dict[str, int]:
+    """Run ideal (noiseless) simulation"""
+    simulator = AerSimulator()
+    job = simulator.run(circuit, shots=shots, seed_simulator=seed)
+    return dict(job.result().get_counts())
+
+
+def _run_noisy_simulation(circuit: QuantumCircuit, shots: int, profile: SimulationProfile) -> dict[str, int]:
+    """
+    Run noisy simulation using a fake backend.
+
+    The fake backend provides realistic noise models derived from actual
+    IBM Quantum hardware calibration data.
+    """
+    if not profile.backend_name:
+        raise SimulationError("backend_name is required for noisy simulation")
+
+    fake_backend = get_fake_backend(profile.backend_name)
+
+    # Transpile circuit to match backend's basis gates and coupling map
+    transpiled = transpile(circuit, backend=fake_backend, optimization_level=1)
+
+    logger.info(
+        f"Transpiled circuit for {profile.backend_name}: "
+        f"{circuit.num_qubits} qubits, depth {circuit.depth()} -> {transpiled.depth()}"
+    )
+
+    # Run on fake backend (uses AerSimulator with backend's noise model)
+    job = fake_backend.run(transpiled, shots=shots, seed_simulator=profile.seed)
+    return dict(job.result().get_counts())
+
+
+def _compute_qsphere(circuit: QuantumCircuit) -> list[QSpherePoint] | None:
+    """Compute Q-sphere coordinates from ideal statevector"""
+    try:
+        circuit_without_measure = circuit.remove_final_measurements(inplace=False)
+        state = Statevector.from_instruction(circuit_without_measure)
+        return compute_qsphere_points(state)
+    except Exception as exc:
+        logger.warning("Failed to compute Q-sphere points: %s", exc)
+        return None
 
 
 def simulate_circuit(qubits: int, gates: list, shots: int = 1024) -> SimulationResultDict:

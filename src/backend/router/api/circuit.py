@@ -4,7 +4,14 @@ import logging
 
 from fastapi import APIRouter, HTTPException, status
 
-from backend.model.circuit import CircuitRequest, ErrorResponse, SimulationResult
+from backend.model.circuit import (
+    BackendInfo,
+    BackendType,
+    CircuitRequest,
+    ErrorResponse,
+    SimulationResult,
+)
+from backend.quantum.backends import list_available_backends
 from backend.quantum.converter import json_to_qasm
 from backend.quantum.simulator import SimulationError, simulate_qasm
 
@@ -56,15 +63,20 @@ async def simulate(request: CircuitRequest) -> SimulationResult:
         HTTPException: If validation or simulation fails
     """
     try:
-        logger.info(f"Simulating circuit: {request.qubits} qubits, {len(request.gates)} gates, {request.shots} shots")
+        profile = request.profile
+        logger.info(
+            f"Simulating circuit: {request.qubits} qubits, {len(request.gates)} gates, "
+            f"{request.shots} shots, backend={profile.type.value}"
+            + (f" ({profile.backend_name})" if profile.backend_name else "")
+        )
 
         # Convert JSON to OpenQASM
         qasm_code = json_to_qasm(qubits=request.qubits, gates=request.gates)
 
         logger.debug(f"Generated QASM:\n{qasm_code}")
 
-        # Simulate circuit
-        result = simulate_qasm(qasm_code=qasm_code, shots=request.shots)
+        # Simulate circuit with profile
+        result = simulate_qasm(qasm_code=qasm_code, shots=request.shots, profile=profile)
 
         logger.info(
             f"Simulation completed in {result['execution_time']:.3f}s, got {len(result['counts'])} unique outcomes"
@@ -119,3 +131,43 @@ async def list_gates() -> dict[str, list[str]]:
         "rotation": ["RX", "RY", "RZ"],
         "two_qubit": ["CNOT"],
     }
+
+
+@router.get(
+    "/backends",
+    response_model=list[BackendInfo],
+    summary="List available backends",
+    description="Get a list of all available simulation backends including ideal and noisy simulators",
+)
+async def list_backends() -> list[BackendInfo]:
+    """
+    List all available simulation backends.
+
+    Returns a list of backends including:
+    - Ideal simulator (noiseless)
+    - Fake backends (noisy simulators based on IBM Quantum hardware)
+
+    Future: QPU backends will be added here.
+    """
+    backends: list[BackendInfo] = [
+        BackendInfo(
+            id="ideal",
+            name="Ideal Simulator",
+            num_qubits=32,
+            backend_type=BackendType.IDEAL,
+            description="Noiseless statevector simulator",
+        )
+    ]
+
+    for spec in list_available_backends():
+        backends.append(
+            BackendInfo(
+                id=spec.id,
+                name=spec.name,
+                num_qubits=spec.num_qubits,
+                backend_type=BackendType.NOISY_FAKE,
+                description=spec.description,
+            )
+        )
+
+    return backends

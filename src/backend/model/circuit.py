@@ -1,6 +1,41 @@
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
+
+
+class BackendType(str, Enum):
+    """Supported backend types"""
+
+    IDEAL = "ideal"
+    NOISY_FAKE = "noisy_fake"
+    # QPU = "qpu"  # Reserved for future implementation
+
+
+class SimulationProfile(BaseModel):
+    """Simulation execution profile"""
+
+    type: BackendType = Field(default=BackendType.IDEAL, description="Backend type")
+    backend_name: Optional[str] = Field(None, description="Fake backend name (required for noisy_fake)")
+    seed: Optional[int] = Field(None, ge=0, description="Random seed for reproducibility")
+
+    @field_validator("backend_name")
+    @classmethod
+    def validate_backend_name(cls, v: Optional[str], info) -> Optional[str]:
+        backend_type = info.data.get("type")
+        if backend_type == BackendType.NOISY_FAKE and not v:
+            raise ValueError("backend_name is required for noisy_fake type")
+        return v
+
+
+class BackendInfo(BaseModel):
+    """Backend information for UI display"""
+
+    id: str = Field(..., description="Backend identifier")
+    name: str = Field(..., description="Display name")
+    num_qubits: int = Field(..., ge=1, description="Number of qubits")
+    backend_type: BackendType = Field(..., description="Backend type")
+    description: Optional[str] = Field(None, description="Backend description")
 
 
 class Gate(BaseModel):
@@ -34,9 +69,12 @@ class Gate(BaseModel):
 class CircuitRequest(BaseModel):
     """Request payload for circuit simulation"""
 
-    qubits: int = Field(..., ge=2, le=5, description="Number of qubits (2-5)")
+    qubits: int = Field(..., ge=1, le=5, description="Number of qubits (1-5)")
     gates: list[Gate] = Field(..., max_length=20, description="List of gates (max 20)")
     shots: int = Field(1024, ge=100, le=10000, description="Number of measurement shots")
+    profile: SimulationProfile = Field(
+        default_factory=SimulationProfile, description="Simulation profile (backend selection)"
+    )
 
     @field_validator("gates")
     @classmethod
