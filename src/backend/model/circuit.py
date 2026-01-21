@@ -69,7 +69,7 @@ class Gate(BaseModel):
 class CircuitRequest(BaseModel):
     """Request payload for circuit simulation"""
 
-    qubits: int = Field(..., ge=2, le=5, description="Number of qubits (2-5)")
+    qubits: int = Field(..., ge=1, le=5, description="Number of qubits (1-5)")
     gates: list[Gate] = Field(..., max_length=20, description="List of gates (max 20)")
     shots: int = Field(1024, ge=100, le=10000, description="Number of measurement shots")
     profile: SimulationProfile = Field(
