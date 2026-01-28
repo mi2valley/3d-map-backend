@@ -1,6 +1,6 @@
 # Qamposer Backend
 
-Quantum circuit simulation backend for [qamposer-react](../qamposer-react). Powered by FastAPI and Qiskit.
+Quantum circuit simulation backend for [qamposer-react](https://github.com/QAMP-62/qamposer-react). Powered by FastAPI and Qiskit.
 
 ## Overview
 
@@ -34,6 +34,7 @@ The API will be available at `http://localhost:8080`.
 ## API Documentation
 
 Once the server is running:
+
 - Swagger UI: `http://localhost:8080/docs`
 - ReDoc: `http://localhost:8080/redoc`
 
@@ -44,6 +45,7 @@ Once the server is running:
 Execute a quantum circuit simulation.
 
 **Request:**
+
 ```json
 {
   "qubits": 2,
@@ -59,6 +61,7 @@ Execute a quantum circuit simulation.
 ```
 
 **Response:**
+
 ```json
 {
   "counts": { "00": 512, "11": 512 },
@@ -84,10 +87,10 @@ cp .env.example .env
 
 Key environment variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ENVIRONMENT` | Runtime environment | `development` |
-| `LOG_LEVEL` | Logging level | `INFO` |
+| Variable       | Description          | Default                     |
+| -------------- | -------------------- | --------------------------- |
+| `ENVIRONMENT`  | Runtime environment  | `development`               |
+| `LOG_LEVEL`    | Logging level        | `INFO`                      |
 | `CORS_ORIGINS` | Allowed CORS origins | `["http://localhost:5173"]` |
 
 ## Development
