@@ -36,6 +36,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:4321",
     "http://localhost:5173",
+    "qamposer.org",
 ]
 app.add_middleware(
     CORSMiddleware,
