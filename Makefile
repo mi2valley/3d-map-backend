@@ -1,6 +1,6 @@
 .PHONY: run install update build test
 
-PROGRAM_NAME := "py312"
+PROGRAM_NAME := "qamposer-backend"
 
 prepare:
 	cp .env.example .env
